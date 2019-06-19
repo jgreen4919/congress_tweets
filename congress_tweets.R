@@ -27,6 +27,26 @@ remaining <- function(q, default = 15){
   return(r)
 }
 
+
+### get tweets ###
+# get members from cspan list
+members <- rtweet::lists_members(slug = "members-of-congress", owner = "cspan")
+
+# make sure you have a full complement of get_timeline() calls
+check.limits()
+
+# get last 3200 tweets from each member
+tweets <- bind_rows(lapply(members$user_id, function(x){
+  
+  # keeps track of progress to give you an idea of how long this will take
+  print(which(members$user_id == x))
+  
+  # get tweets
+  t <- rtweet::get_timeline(x, n = 3200)
+  return(t)
+}))
+
+
 ### get follows ###
 # set next cursor
 nc <- "-1"
@@ -63,24 +83,6 @@ congress.follows <- bind_rows(lapply(members$screen_name, function(x){
   fdat <- unique(bind_rows(friends))
   
   return(fdat)
-}))
-
-### get tweets ###
-# get members from cspan list
-members <- rtweet::lists_members(slug = "members-of-congress", owner = "cspan")
-
-# make sure you have a full complement of get_timeline() calls
-check.limits()
-
-# get last 3200 tweets from each member
-tweets <- bind_rows(lapply(members$user_id, function(x){
-  
-  # keeps track of progress to give you an idea of how long this will take
-  print(which(members$user_id == x))
-  
-  # get tweets
-  t <- rtweet::get_timeline(x, n = 3200)
-  return(t)
 }))
 
 
