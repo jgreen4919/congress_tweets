@@ -27,7 +27,7 @@ remaining <- function(q, default = 15){
   return(r)
 }
 
-# get follows
+### get follows ###
 # set next cursor
 nc <- "-1"
 congress.follows <- bind_rows(lapply(members$screen_name, function(x){
@@ -65,7 +65,7 @@ congress.follows <- bind_rows(lapply(members$screen_name, function(x){
   return(fdat)
 }))
 
-
+### get tweets ###
 # get members from cspan list
 members <- rtweet::lists_members(slug = "members-of-congress", owner = "cspan")
 
