@@ -1,5 +1,6 @@
 # members of congress on twitter
 library(rtweet)
+library(tidyverse)
 
 # function to check rate limits
 check.limits <- function(){
@@ -11,7 +12,7 @@ check.limits <- function(){
 }
 
 # function to return how many requests are left on a given twitter API call
-  # takes q, the query, and default equal to the limit for that query (for calls with limit > 15, needs to be reset)
+# takes q, the query, and default equal to the limit for that query (for calls with limit > 15, needs to be reset)
 remaining <- function(q, default = 15){
   cl <- check.limits()
   
@@ -26,22 +27,50 @@ remaining <- function(q, default = 15){
   return(r)
 }
 
+# get follows
+nc <- "-1"
+congress.follows <- bind_rows(lapply(members$screen_name, function(x){
+  print(which(members$screen_name == x))
+  
+  rounds <- ceiling(members$friends_count[members$screen_name == x] / 5000)
+  
+  nc <<- "-1"
+  
+  friends <- lapply(1:rounds, function(y){
+    limit <- remaining(q = "friends/ids")
+    if(limit == 0){
+      Sys.sleep(60 * 15 + 10)
+    }
+    
+    page <- rtweet::get_friends(x, page = nc)
+    
+    nc <<- rtweet::next_cursor(page)
+    
+    return(page)
+  })
+  
+  fdat <- unique(bind_rows(friends))
+  
+  return(fdat)
+}))
+
+
 # get members from cspan list
 members <- rtweet::lists_members(slug = "members-of-congress", owner = "cspan")
 
+# make sure you have a full complement of get_timeline() calls
+check.limits()
+
 # get last 3200 tweets from each member
 tweets <- bind_rows(lapply(members$user_id, function(x){
+  
+  # keeps track of progress to give you an idea of how long this will take
   print(which(members$user_id == x))
   
-  limit <- remaining(q = "statuses/user_timeline")
-  
-  if(limit == 0){
-    Sys.sleep(60 * 15 + 10)
-  }
-  
+  # get tweets
   t <- rtweet::get_timeline(x, n = 3200)
   return(t)
 }))
-  
-  
-  
+
+
+
