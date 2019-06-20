@@ -284,8 +284,10 @@ combined.follows <- bind_rows(congress.follows, extrafollows)
 combined.tweets <- bind_rows(tweets, extratweets)
 
 # members with two official accounts: lindsey graham, debbie wasserman schultz, brendan boyle, dina titus
-double.handles <- data.frame(usefulhandle = c("GrahamBlog","DWStweets","dinatitus","CongBoyle"),
-                             officialhandle = c("LindseyGrahamSC","RepDWStweets","repdinatitus","RepBrendanBoyle"))
+double.handles <- data.frame(usefulhandle = c("GrahamBlog","DWStweets","dinatitus",
+                                              "CongBoyle","RoKhanna","aguilarpete"),
+                             officialhandle = c("LindseyGrahamSC","RepDWStweets","repdinatitus",
+                                                "RepBrendanBoyle","RepRoKhanna","RepPeteAguilar"))
 double.handles <- double.handles %>% 
   left_join(members[,c("screen_name","name")], 
             by = c("officialhandle" = "screen_name"))
