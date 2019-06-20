@@ -273,6 +273,9 @@ bonus.handles <- bonus.handles %>% left_join(extra.users[,c("screen_name","verif
 # flag to drop if unofficial account is not verified or if it is not active (1 tweet per day)
 bonus.handles$drop.unofficial <- with(bonus.handles, ifelse(verified == FALSE | ntweets.extra < days.since, 1, 0))
 
+# if you want to update things, start here
+# load("~/Desktop/congress/congresstwitter_progress.RData")
+
 # keep the rest
 bonus.handles.keeps <- bonus.handles %>% filter(drop.unofficial == 0)
 
@@ -311,17 +314,17 @@ cufollows <- combined.follows %>%
   filter(user %in% c(as.character(bonus.handles.keeps$usefulhandle), as.character(bonus.handles.keeps$officialhandle))) %>%
   left_join(bonus.handles.keeps %>% dplyr::select(usefulhandle, officialhandle, name) %>%
               reshape2::melt(id.vars = c("name")) %>% dplyr::select(name, value),
-            by = c("user" = "name"))
+            by = c("user" = "value"))
 
 
 # separate out members who did not need any combining
-solo.tweets <- combined.tweets %>% filter(!screen_name %in% c(as.character(bonus.handles.keeps$usefulhandle), 
+solo.tweets <- tweets %>% filter(!screen_name %in% c(as.character(bonus.handles.keeps$usefulhandle), 
                                                               as.character(bonus.handles.keeps$officialhandle),
                                                               as.character(double.handles$usefulhandle), 
                                                               as.character(double.handles$officialhandle)))
 solo.tweets$name.y <- solo.tweets$name
 
-solo.follows <- combined.follows %>% filter(!user %in% c(as.character(bonus.handles.keeps$usefulhandle), 
+solo.follows <- congress.follows %>% filter(!user %in% c(as.character(bonus.handles.keeps$usefulhandle), 
                                                               as.character(bonus.handles.keeps$officialhandle),
                                                               as.character(double.handles$usefulhandle), 
                                                               as.character(double.handles$officialhandle)))
