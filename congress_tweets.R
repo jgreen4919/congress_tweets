@@ -338,9 +338,11 @@ all.tweets <- bind_rows(solo.tweets, cutweets, doublehandle.tweets)
 all.follows <- bind_rows(solo.follows, cufollows, doublehandle.follows)
 
 
-# save two separate files: a more expansive one that you can use to update, and a smaller one that you can load up for analyses
+# save a more expansive one that you can use to update
 save(bonus.handles, congress.follows, extra.users, extrafollows, extratweets, 
      members, ntweets.bonus, ntweets.official, tweets,
      all.tweets, all.follows,
      file= "~/Desktop/congress/congresstwitter_progress.RData")
+
+# save a smaller file for quicker loading
 save(all.tweets, all.follows, file  = "~/Desktop/congress/congress116twitter_through61919.RData")
