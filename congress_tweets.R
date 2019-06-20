@@ -344,5 +344,3 @@ save(bonus.handles, congress.follows, extra.users, extrafollows, extratweets,
      all.tweets, all.follows,
      file= "~/Desktop/congress/congresstwitter_progress.RData")
 save(all.tweets, all.follows, file  = "~/Desktop/congress/congress116twitter_through61919.RData")
-
-load("~/Desktop/congress/congresstwitter_progress.RData")
