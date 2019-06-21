@@ -302,6 +302,12 @@ doublehandle.follows <-combined.follows %>%
   filter(user %in% c(as.character(double.handles$usefulhandle), as.character(double.handles$officialhandle))) %>%
   left_join(double.handles %>% reshape2::melt(id.vars = c("name")) %>% dplyr::select(name, value),
             by = c("user" = "value"))
+doublehandle.follows <- bind_rows(lapply(unique(doublehandle.follows$name), function(x){
+  scrubdat <- doublehandle.follows %>% 
+    filter(name == x) %>%
+    filter(!duplicated(user_id))
+  return(scrubdat)
+}))
 
 
 # combine tweets/follows for members with useful unofficial accounts
@@ -317,19 +323,25 @@ cufollows <- combined.follows %>%
   left_join(bonus.handles.keeps %>% dplyr::select(usefulhandle, officialhandle, name) %>%
               reshape2::melt(id.vars = c("name")) %>% dplyr::select(name, value),
             by = c("user" = "value"))
+cufollows <- bind_rows(lapply(unique(cufollows$name), function(x){
+  scrubdat <- cufollows %>% 
+    filter(name == x) %>%
+    filter(!duplicated(user_id))
+  return(scrubdat)
+}))
 
 
 # separate out members who did not need any combining
 solo.tweets <- tweets %>% filter(!screen_name %in% c(as.character(bonus.handles.keeps$usefulhandle), 
-                                                              as.character(bonus.handles.keeps$officialhandle),
-                                                              as.character(double.handles$usefulhandle), 
-                                                              as.character(double.handles$officialhandle)))
+                                                     as.character(bonus.handles.keeps$officialhandle),
+                                                     as.character(double.handles$usefulhandle), 
+                                                     as.character(double.handles$officialhandle)))
 solo.tweets$name.y <- solo.tweets$name
 
 solo.follows <- congress.follows %>% filter(!user %in% c(as.character(bonus.handles.keeps$usefulhandle), 
-                                                              as.character(bonus.handles.keeps$officialhandle),
-                                                              as.character(double.handles$usefulhandle), 
-                                                              as.character(double.handles$officialhandle)))
+                                                         as.character(bonus.handles.keeps$officialhandle),
+                                                         as.character(double.handles$usefulhandle), 
+                                                         as.character(double.handles$officialhandle)))
 
 # stack
 names(doublehandle.tweets) <- names(solo.tweets)
