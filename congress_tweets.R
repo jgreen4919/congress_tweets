@@ -274,7 +274,7 @@ bonus.handles <- bonus.handles %>% left_join(extra.users[,c("screen_name","verif
 bonus.handles$drop.unofficial <- with(bonus.handles, ifelse(verified == FALSE | ntweets.extra < days.since, 1, 0))
 
 # if you want to update things, start here
-# load("~/Desktop/congress/congresstwitter_progress.RData")
+#load("~/Desktop/congress/congresstwitter_progress.RData")
 
 # keep the rest
 bonus.handles.keeps <- bonus.handles %>% filter(drop.unofficial == 0)
@@ -316,7 +316,7 @@ cutweets <- combined.tweets %>%
                             as.character(bonus.handles.keeps$officialhandle))) %>%
   left_join(bonus.handles.keeps %>% dplyr::select(usefulhandle, officialhandle, name) %>%
               reshape2::melt(id.vars = c("name")) %>% dplyr::select(name, value),
-            by = c("screen_name" = "name"))
+            by = c("screen_name" = "value"))
 
 cufollows <- combined.follows %>%
   filter(user %in% c(as.character(bonus.handles.keeps$usefulhandle), as.character(bonus.handles.keeps$officialhandle))) %>%
